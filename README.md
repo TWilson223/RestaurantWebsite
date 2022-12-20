@@ -1,2 +1,2 @@
 # RestaurantWebsite
-First Django project to create a simple restaurant website
+First Django project to create a simple restaurant website. Contains a booking form feature integrated into a sqlite database using Django models. Includes about, home, and booking webpages stylized using CSS, html base files, and templates in Django. Django administration is implemented and can be used to change database tables and add rows to models. Website can be viewed by running "python manage.py runserver" in root project folder (littlelemon-final). 
