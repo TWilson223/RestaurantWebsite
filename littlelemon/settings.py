@@ -36,9 +36,10 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
-    # The settings for app updated for the Graded assessment
+    'django.contrib.staticfiles',    
+    'rest_framework',
     'restaurant',
+    'LittleLemonDRF',
 ]
 
 MIDDLEWARE = [
@@ -55,8 +56,7 @@ ROOT_URLCONF = 'littlelemon.urls'
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # The settings for templates updated for the Graded assessment
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',        
         'DIRS': ['restaurant/templates' ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -131,3 +131,11 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES' : [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+        'rest_framework_xml.renderers.XMLRenderer',
+    ]
+}
