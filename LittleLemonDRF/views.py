@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from rest_framework import generics
-from .serializers import MenuItemSerializer, CategorySerializer
-from .models import MenuItem, Category
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes
+from .serializers import MenuItemSerializer, CategorySerializer, RatingSerializer
+from .models import MenuItem, Category, Rating
 
 # Create your views here.
 class CategoriesView(generics.ListCreateAPIView):
@@ -19,3 +21,13 @@ class MenuItemsView(generics.ListCreateAPIView):
 class SingleMenuItemView(generics.RetrieveUpdateDestroyAPIView):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
+
+class RatingsView(generics.ListCreateAPIView):
+    queryset = Rating.objects.all()
+    serializer_class = RatingSerializer
+
+    def get_permissions(self):
+        if(self.request.method == 'GET'):
+            return []
+
+        return [IsAuthenticated()]

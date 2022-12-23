@@ -8,6 +8,7 @@ django = "*"
 djangorestframework = "*"
 djangorestframework-xml = "*"
 bleach = "*"
+djoser = "*"
 
 [dev-packages]
 
