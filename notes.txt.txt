@@ -1,0 +1,7 @@
+superuser: bistroadmin, lemon@786!
+Adrian, lemon@adr!
+Mario, lemon@mar!
+Mike, lemon@mike!
+Sam, lemon@sam!
+Sana, lemon@san!
+Zena, lemon@zena!
