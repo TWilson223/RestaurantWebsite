@@ -3,7 +3,7 @@ from .models import *
 from rest_framework.validators import UniqueTogetherValidator
 from django.contrib.auth.models import User, Group
 
-class UserSerializer (serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id','username', 'email','groups']
@@ -11,9 +11,9 @@ class UserSerializer (serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ['id','title']
+        fields = ['id', 'slug','title']
 
-class MenuItemSerializer(serializers.ModelSerializer):
+class GetMenuItemSerializer(serializers.ModelSerializer):
     category_id = serializers.IntegerField(write_only=True)
     category = CategorySerializer(read_only=True)
 
@@ -25,17 +25,65 @@ class MenuItemSerializer(serializers.ModelSerializer):
             'price' : {'min_value' : 2}
         }
 
+class SaveMenuItemSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = MenuItem
+        fields = ['title', 'price', "featured", 'category']  
+
+class UpdateMenuItemSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = MenuItem
+        fields = ['title', 'price', "featured", 'category']
+        extra_kwargs = {
+            "title": {'required':False},
+            "price": {'required':False},
+            "featured": {'required':False},
+            "category": {'required':False},
+        }
+
 class CartSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(),
+        default=serializers.CurrentUserDefault()
+    )
+
+
+    def validate(self, attrs):
+        attrs['price'] = attrs['quantity'] * attrs['unit_price']
+        return attrs
+
     class Meta:
         model = Cart
-        fields = ['id','user','menuitem','quantity','unit_price','price']
+        fields = ['user', 'menuitem', 'unit_price', 'quantity', 'price']
+        extra_kwargs = {
+            'price': {'read_only': True}
+        }
 
-class OrderSerializer(serializers.ModelSerializer):
+class GetOrderSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    menuitems = serializers.SerializerMethodField(method_name="get_menuItems")
     class Meta:
         model = Order
-        fields = ['id','user','delivery_crew','status','total','date']
+        fields = "__all__"
+        
+
+    def get_menuItems(self, obj):
+        order_items = models.OrderItem.objects.filter(order = obj)
+        return order_items.values()
 
 class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
-        fields = ['id','order','menuitem','quantity','unit_price','price']
+        fields = ['order', 'menuitem', 'quantity', 'price']
+
+
+class OrderSerializer(serializers.ModelSerializer):
+
+    orderitem = OrderItemSerializer(many=True, read_only=True, source='order')
+
+    class Meta:
+        model = Order
+        fields = ['id', 'user', 'delivery_crew',
+                  'status', 'date', 'total', 'orderitem']
